@@ -21,14 +21,14 @@ start_link() ->
 %% @doc list discovered nodes
 list_nodes() ->
     DefaultFun = fun(Node, Acc) ->
-            {ok, [Node |Acc]}
+            [Node |Acc]
     end,
     list_nodes(DefaultFun, []).
 
 %% @doc return Acc.
 list_nodes(Fun, Acc0) ->
-    WrapperFun = fun({_Name, Node}, Acc) ->
-            Fun(Node, Acc)
+    WrapperFun = fun({Name, Node}, Acc) ->
+            Fun({Name, Node}, Acc)
     end,
     ets:foldl(WrapperFun, Acc0, ?DNSSD_BYNAME).
 
