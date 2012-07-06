@@ -39,10 +39,17 @@ init([]) ->
 
     DNSSD = case couch_config:get("refuge", "use_dnssd", "true") of
         "true" ->
-            [?CHILD(refuge_dnssd)];
+            case couch_config:get("refuge", "advertise_dnssd", "true") of
+                "true" ->
+                    [?CHILD(refuge_dnssd_advertise),
+                     ?CHILD(refuge_dnssd)];
+                _ ->
+                    [?CHILD(refuge_dnssd)]
+            end;
         _ ->
             []
     end,
 
     {ok, { {one_for_one, 5, 10}, [Tables, EventManager] ++ UPNPSup
           ++ DNSSD} }.
+
