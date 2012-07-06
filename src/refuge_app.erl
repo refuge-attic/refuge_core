@@ -10,7 +10,7 @@
 %% ===================================================================
 
 start(_StartType, _StartArgs) ->
-    {ok, Deps} = application:get_key(refuge, applications),
+    {ok, Deps} = application:get_key(refuge_core, applications),
     true = lists:all(fun ensure_started/1, Deps),
     refuge_sup:start_link().
 

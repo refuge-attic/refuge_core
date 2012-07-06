@@ -1,7 +1,7 @@
-{application, refuge,
+{application, refuge_core,
  [
-  {description, ""},
-  {vsn, "1"},
+  {description, "Refuge core"},
+  {vsn, "0.1"},
   {registered, []},
   {applications, [
                   kernel,
@@ -12,8 +12,8 @@
                   sasl,
                   ssl,
                   couch,
-                  couch_httpd,
                   cowboy,
+                  couch_httpd,
                   ibrowse,
                   dnssd
                  ]},

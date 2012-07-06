@@ -67,7 +67,7 @@ merge_proplists(OldProp, NewProp) ->
 
 
 get_app_env(Env, Default) ->
-    case application:get_env(refuge, Env) of
+    case application:get_env(refuge_core, Env) of
         {ok, Val} -> Val;
         undefined -> Default
     end.
