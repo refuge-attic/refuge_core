@@ -20,18 +20,16 @@
 %%
 -spec get_port() -> inet:port_number().
 get_port() ->
-    ListenerPid = ref_to_listener_pid(upnp_cowboy),
-    {ok, Port} = cowboy_listener:get_port(ListenerPid),
-    Port.
+    ranch:get_port(upnp_cowboy).
 
 
 init({tcp, http}, Req, _Opts) ->
     {ok, Req, undefined_state}.
 
 handle(Req0, State) ->
-    case cowboy_http_req:method(Req0) of
+    case cowboy_req:method(Req0) of
         {<<"NOTIFY">>, _} ->
-            {ok, ReqBody, Req} = cowboy_http_req:body(Req0),
+            {ok, ReqBody, Req} = cowboy_req:body(Req0),
             %% @todo: intention here is to use eventing to monitor if there's
             %%        someone else steals refuge's port mapping. but seems
             %%        the router used to test against it (linksys srt54g) doesn't
@@ -44,24 +42,10 @@ handle(Req0, State) ->
                 %%Content ->
                 %%    refuge_upnp_entity:notify(Content)
             end,
-            {ok, Reply} = cowboy_http_req:reply(200,[
+            {ok, Reply} = cowboy_req:reply(200,[
                         {<<"Content-type">>, <<"text/plain">>}], <<>>, Req),
             {ok, Reply, State}
     end.
 
 terminate(_Req, _State) ->
     ok.
-
-
-%% Internal.
-
--spec ref_to_listener_pid(any()) -> pid().
-ref_to_listener_pid(Ref) ->
-	Children = supervisor:which_children(refuge_upnp_sup),
-	{_, ListenerSupPid, _, _} = lists:keyfind(
-		{cowboy_listener_sup, Ref}, 1, Children),
-	ListenerSupChildren = supervisor:which_children(ListenerSupPid),
-	{_, ListenerPid, _, _} = lists:keyfind(
-		cowboy_listener, 1, ListenerSupChildren),
-	ListenerPid.
-

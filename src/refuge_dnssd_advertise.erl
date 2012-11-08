@@ -14,13 +14,13 @@ start_link() ->
 
 init([]) ->
     SName = service_name(),
-    {ok, SPort} = couch_httpd_util:get_port(https),
+    SPort = couch_httpd_util:get_port(https),
     {ok, RegRef} = dnssd:register(SName, "_refuge._tcp", SPort),
 
     {ok, HttpRef} = case couch_config:get("refuge", "advertise_dnssd_http",
                                           "true") of
         "true" ->
-            {ok, Port} = couch_httpd_util:get_port(http),
+            Port = couch_httpd_util:get_port(http),
             HttpName = << "Refuge (", SName/binary, ")" >>,
             dnssd:register(HttpName, "_http._tcp", Port, [{path, "/_utils"}]);
         _ ->

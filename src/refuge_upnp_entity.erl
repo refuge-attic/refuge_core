@@ -98,7 +98,7 @@ handle_cast({update, Cat, NewProp}, #state{prop = Prop} = State) ->
             case refuge_util:ssl_ip() of
                 nil -> ignore;
                 _ ->
-                    {ok, SPort} = couch_httpd_util:get_port(https),
+                    SPort = couch_httpd_util:get_port(https),
                     add_port_mapping(self(), tcp, SPort)
             end;
         _ -> ignore

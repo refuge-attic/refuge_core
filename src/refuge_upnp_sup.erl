@@ -27,9 +27,9 @@ init([]) ->
     UPNP_NET = {refuge_upnp_net, {refuge_upnp_net, start_link, []},
                 permanent, 2000, worker, [refuge_upnp_net]},
     HTTPd_Dispatch = [ {'_', [{'_', refuge_upnp_handler, []}]} ],
-    HTTPd = cowboy:child_spec(upnp_cowboy,
-                              10, cowboy_tcp_transport, [{port, 0}],
-                              cowboy_http_protocol, [{dispatch, HTTPd_Dispatch}]),
+    HTTPd = ranch:child_spec(upnp_cowboy,
+                              10, ranch_tcp, [{port, 0}],
+                              cowboy_protocol, [{dispatch, HTTPd_Dispatch}]),
     Children = [UPNP_NET, HTTPd],
     RestartStrategy = {one_for_one, 1, 60},
     {ok, {RestartStrategy, Children}}.
